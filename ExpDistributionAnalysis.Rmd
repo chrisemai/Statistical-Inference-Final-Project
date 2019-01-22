@@ -1,0 +1,58 @@
+###Part 1: The Distribution of Averages of Exponential Distributions 
+#####By Chris Mai 
+
+#####Overview 
+The exponential distribution is a probability distribution that describes the time between two events in a Poissson process. Here, I model the sample mean and variance for 1,000 simulations of the average of 40 exponentials. Lamdba=0.2 for this simulation
+
+#####Simulations
+
+#####Sample Mean versus Theoretical Mean:
+
+```{r}
+#The expected mean of the exponential distribution is 1/lambda. In this simulation the expected mean is 5 (1/0.2)
+
+nosim<-1000
+n<-40
+lambda<-0.2
+
+mean(apply(matrix(rexp(nosim*n, lambda), nosim), 1, mean)) #The sample mean is close to 5
+
+#This simulation calcuates the mean of 1,000 simulations. Each simulation is the mean of 40 exponentials with lambda 0.2
+histmeans<-apply(matrix(rexp(nosim*n, lambda), nosim), 1, mean)
+hist(histmeans,breaks = seq(0, 14, by = .5), main = "Sample Mean of 1,000 averages of 40 exponents")
+abline(v=5, col="violetred3", lwd=2)
+
+
+#This histogram charts the 1,000 simulations, each an average of 40 exponentials. As expected, they are distributed around the expected population mean of 5.
+```
+
+#####Sample Variance versus Theoretical Variance: 
+```{r}
+#The expected variance of the exponential distribution is (1/lambda)^2/n. In this simulation the expected variance is 0.625 (5^2)/40. The sample variance is close to the expected population variance.
+var(apply(matrix(rexp(nosim*n, lambda), nosim), 1, mean)) 
+```
+
+#####Distribution: 
+```{r}
+#Here is a chart of a standard normal distrbution
+x=seq(-4,4,length=200)
+y=dnorm(x,mean=0,sd=1)
+plot(x,y,type="l",lwd=2,col="red",main="Standard Normal Distribution")
+
+
+#With the standard normal distribution and the sample means charted together, it becomes clear that the distribution of sample means is roughly normal 
+par(mfrow=c(2,1)) 
+plot(density(histmeans), col="cyan4", lwd=2, main="Sample Mean of 1,000 averages of 40 exponents")
+plot(x,y,type="l",col="deeppink3",lwd=2,main="Standard Normal Distribution")
+
+
+#Compare this to the distribution of 1,000 random exponentials, which does not resemble a normal distribution
+rands<-rexp(1000,.2)
+
+par(mfrow=c(2,1))
+hist(rands, main = "Sample Mean of 1,000 exponents")
+plot(x,y,type="l",col="deeppink3",lwd=2, main="Standard Normal Distribution")
+```
+
+
+

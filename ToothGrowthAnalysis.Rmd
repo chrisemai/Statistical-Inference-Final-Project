@@ -1,0 +1,52 @@
+###Part 2: Guinea Pig Tooth Growth by Supplement and Dose
+
+#####Exploratory Analysis and Data Summary
+```{r}
+dim(ToothGrowth) #60 observations and 3 columns 
+mean(ToothGrowth$len) #mean tooth length of 18.8
+aggregate(ToothGrowth$len, by=list(ToothGrowth$supp,ToothGrowth$dose), 
+          FUN=mean, na.rm=TRUE) #The combination of Vitamin C and 2.0 dose has the highest average length
+```
+
+#####Confidence Intervals
+```{r, results="hide", include=FALSE}
+library(dplyr)
+```
+
+```{r}
+#Here, I calculate a 95% confidence interval for tooth length by supplement, by dose, and by both grouped.
+
+#by supplement. The results can be interpreted as follows: We can assume with 95% confidence that the range 20.1 to 21.2 contains the true population mean for tooth length for guinea pigs receiving an OJ dose.
+ToothGrowth %>%
+  group_by(supp) %>%
+  summarise(tooth_mean= mean(len),
+            Upper_CI= tooth_mean+(1.96*sd(len)/sqrt(sum(len))),
+            Lower_CI= tooth_mean-(1.96*sd(len)/sqrt(sum(len))))
+
+
+#by dose
+ToothGrowth %>%
+  group_by(dose) %>%
+  summarise(tooth_mean= mean(len),
+            Upper_CI= tooth_mean+(1.96*sd(len)/sqrt(sum(len))),
+            Lower_CI= tooth_mean-(1.96*sd(len)/sqrt(sum(len))))
+
+#by both combined
+ToothGrowth %>%
+  group_by(supp,dose) %>%
+  summarise(tooth_mean= mean(len),
+            Upper_CI= tooth_mean+(1.96*sd(len)/sqrt(sum(len))),
+            Lower_CI= tooth_mean-(1.96*sd(len)/sqrt(sum(len))))
+```
+
+#####Hypothesis Tests for tooth growth by supp and dose
+```{r}
+#Here is a hypothesis test analyzing tooth length by supplement. Because the 95% confidence interval contains zero, we cannot reject the null hypothesis that the sample means for OJ and Vitamin C are equal. 
+t.test(len~supp, paired=FALSE, var.equal=TRUE, data=ToothGrowth)
+```
+
+#####Conclusions and Assumptions
+1. The tooth growth data is normally distributed 
+2. The sample is relevant to the population of interest 
+3. The variance between the OJ and Vitamin C groups are equal 
+
